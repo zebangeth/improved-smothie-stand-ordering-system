@@ -3,7 +3,7 @@ import bodyParser from 'body-parser'
 import pino from 'pino'
 import expressPinoLogger from 'express-pino-logger'
 import { Collection, Db, MongoClient, ObjectId } from 'mongodb'
-import { Customer, CustomerWithOrders, DraftOrder, Operator, OperatorWithOrders, Order, possibleIngredients } from './data'
+import { Customer, CustomerWithOrders, DraftOrder, Operator, OperatorWithOrders, Order } from './data'
 
 // set up Mongo
 const url = 'mongodb://127.0.0.1:27017'
@@ -27,9 +27,11 @@ const logger = pino({
 app.use(expressPinoLogger({ logger }))
 
 // app routes
-app.get("/api/possible-ingredients", (req, res) => {
-  res.status(200).json(possibleIngredients)
+app.get("/api/possible-ingredients", async (req, res) => {
+  const ingredients = await db.collection('possibleIngredients').find({}).toArray();
+  res.status(200).json(ingredients)
 })
+
 
 app.get("/api/orders", async (req, res) => {
   res.status(200).json(await orders.find({ state: { $ne: "draft" }}).toArray())
@@ -78,7 +80,7 @@ app.put("/api/customer/:customerId/draft-order", async (req, res) => {
     },
     {
       $set: {
-        ingredients: order.ingredients
+        ingredients: order.ingredientIds
       }
     },
     {
