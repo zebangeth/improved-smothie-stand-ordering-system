@@ -3,7 +3,7 @@ import bodyParser from 'body-parser'
 import pino from 'pino'
 import expressPinoLogger from 'express-pino-logger'
 import { Collection, Db, MongoClient, ObjectId } from 'mongodb'
-import { Customer, CustomerWithOrders, DraftOrder, Operator, OperatorWithOrders, Order } from './data'
+import {Ingredient, Customer, CustomerWithOrders, DraftOrder, Operator, OperatorWithOrders, Order } from './data'
 
 // set up Mongo
 const url = 'mongodb://127.0.0.1:27017'
@@ -12,6 +12,7 @@ let db: Db
 let customers: Collection<Customer>
 let orders: Collection<Order>
 let operators: Collection<Operator>
+let possibleIngredients: Collection<Ingredient>
 
 // set up Express
 const app = express()
@@ -28,10 +29,9 @@ app.use(expressPinoLogger({ logger }))
 
 // app routes
 app.get("/api/possible-ingredients", async (req, res) => {
-  const ingredients = await db.collection('possibleIngredients').find({}).toArray();
+  const ingredients = await possibleIngredients.find().toArray()
   res.status(200).json(ingredients)
 })
-
 
 app.get("/api/orders", async (req, res) => {
   res.status(200).json(await orders.find({ state: { $ne: "draft" }}).toArray())
@@ -65,7 +65,7 @@ app.get("/api/customer/:customerId/draft-order", async (req, res) => {
   // TODO: validate customerId
 
   const draftOrder = await orders.findOne({ state: "draft", customerId })
-  res.status(200).json(draftOrder || { customerId, ingredients: [] })
+  res.status(200).json(draftOrder || { customerId, ingredientIds: [] })
 })
 
 app.put("/api/customer/:customerId/draft-order", async (req, res) => {
@@ -80,7 +80,7 @@ app.put("/api/customer/:customerId/draft-order", async (req, res) => {
     },
     {
       $set: {
-        ingredients: order.ingredientIds
+        ingredientIds: order.ingredientIds
       }
     },
     {
@@ -163,6 +163,7 @@ client.connect().then(() => {
   operators = db.collection('operators')
   orders = db.collection('orders')
   customers = db.collection('customers')
+  possibleIngredients = db.collection('possibleIngredients')
 
   // start server
   app.listen(port, () => {
