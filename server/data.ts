@@ -24,6 +24,10 @@ export interface CustomerWithOrders extends Customer {
   orders: Order[]
 }
 
+export interface OperatorWithOrders extends Operator {
+  orders: Order[]
+}
+
 export interface Operator {
   _id: string
   name: string
