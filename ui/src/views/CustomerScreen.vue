@@ -8,7 +8,7 @@
     
     <h2>Draft Order</h2>
     <div>
-      <b-button v-for="ingredient in possibleIngredients" :key="ingredient._id" @click="addIngredient(ingredient._id)" class="m-1">
+      <b-button v-for="ingredient in possibleIngredients" :key="ingredient._id" @click="addIngredientById(ingredient._id)" class="m-1">
         Add {{ ingredient.name }} (${{ ingredient.cost.toFixed(2) }})
       </b-button>
     </div>
@@ -30,12 +30,17 @@
       <b-button @click="submit">Submit</b-button>
       Note: must save before submitting
     </div>
+    <br>
+      <h2>Order Bot</h2>
+    <ChatBot :possible-ingredients="possibleIngredientNames" @ingredient-clicked="addIngredient" />
+
   </div>
 </template>
 
 <script setup lang="ts">
 import { onMounted, ref, computed, Ref } from 'vue'
 import { CustomerWithOrders, Ingredient } from "../../../server/data"
+import ChatBot from '../components/ChatBot.vue'
 
 // props
 interface Props {
@@ -77,7 +82,7 @@ function getIngredientName(ingredientId: string) {
   return possibleIngredients.value.find(i => i._id === ingredientId)?.name || 'Unknown Ingredient'
 }
 
-function addIngredient(ingredientId: string) {
+function addIngredientById(ingredientId: string) {
   draftOrderIngredients.value.push(ingredientId)
 }
 
@@ -112,4 +117,14 @@ async function submit() {
   )
   await refresh()
 }
+
+const possibleIngredientNames = computed(() => possibleIngredients.value.map(i => i.name))
+
+function addIngredient(ingredientName: string) {
+  const ingredient = possibleIngredients.value.find(i => i.name === ingredientName)
+  if (ingredient) {
+    draftOrderIngredients.value.push(ingredient._id)
+  }
+}
+
 </script>

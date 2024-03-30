@@ -7,8 +7,8 @@
           <div>
             <div v-if="m.generating"><b-icon-three-dots animation="cylon" font-scale="4" /></div>
             <span v-for="word in m.content.split(' ')" :key="word" @click="handleIngredientClick(word)">
-              <span v-if="possibleIngredients.includes(word)" class="ingredient">{{ word }}</span>
-              <span v-else>{{ word }}</span>
+              <span v-if="possibleIngredients.includes(word)" class="ingredient">{{ word + " " }}</span>
+              <span v-else>{{ word + " "}}</span>
             </span>
           </div>
         </b-list-group-item>
@@ -42,18 +42,18 @@
 }
 
 .ingredient {
-  color: blue;
+  color: rgb(111, 0, 255);
   text-decoration: underline;
   cursor: pointer;
 }
 </style>
 
 <script setup lang="ts">
-import { onMounted, ref, watch } from 'vue'
+import { onMounted, ref } from 'vue'
 import { generateStream } from '../utilities'
 
 interface Message {
-  role: "user" | "assistant" | "system"
+  role: "user" | "assistant"
   content: string
   generating?: boolean
 }
@@ -71,7 +71,6 @@ const messages = ref([] as Message[])
 const iconMapping = {
   user: "🧑",
   assistant: "🤖",
-  system: "⚙️"
 }
 
 // set focus to the text area on load
@@ -94,13 +93,6 @@ function handleIngredientClick(word: string) {
     emit('ingredientClicked', word)
   }
 }
-
-watch(() => props.possibleIngredients, (newIngredients) => {
-  messages.value.push({
-    role: 'system',
-    content: `The possible smoothie ingredients are: ${newIngredients.join(', ')}`
-  })
-})
 
 async function sendMessage() {
   generating.value = true

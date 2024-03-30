@@ -35,9 +35,9 @@ const possibleIngredients: Ingredient[] = [
   { _id: "i4", name: "Spinach", cost: 0.5 },
   { _id: "i5", name: "Kale", cost: 0.5 },
   { _id: "i6", name: "Blueberry", cost: 1 },
-  { _id: "i7", name: "Almond Milk", cost: 0.6 },
-  { _id: "i8", name: "Oat Milk", cost: 0.4 },
-  { _id: "i9", name: "Greek Yogurt", cost: 0.9 },
+  { _id: "i7", name: "Apple", cost: 0.6 },
+  { _id: "i8", name: "Oat", cost: 0.4 },
+  { _id: "i9", name: "Raspberry", cost: 0.9 },
   { _id: "i10", name: "Honey", cost: 0.7 },
 ]
 
