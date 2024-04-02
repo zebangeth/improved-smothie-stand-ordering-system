@@ -1,0 +1,17 @@
+{
+  "name": "assignment5-zl411",
+  "version": "1.0.0",
+  "description": "In this assignment, you are going to improve the user experience of the Smoothie Stand example.",
+  "main": "index.js",
+  "directories": {
+    "test": "tests"
+  },
+  "scripts": {},
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@playwright/test": "^1.42.1",
+    "@types/node": "^20.12.2"
+  }
+}
